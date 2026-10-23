@@ -1,12 +1,4 @@
 
-add_library(encoding
-    huffman_encoding.c
-)
-
-target_include_directories(encoding
-    PUBLIC
-        ${PROJECT_SOURCE_DIR}/include
-)
 
 add_library(tree 
     tree.c
@@ -15,6 +7,22 @@ add_library(tree
 target_include_directories(tree
     PUBLIC
         ${PROJECT_SOURCE_DIR}/include
+)
+
+
+add_library(encoding
+    huffman_encoding.c
+)
+
+
+target_include_directories(encoding
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+)
+
+target_link_libraries(encoding
+    PRIVATE
+        tree
 )
 
 add_executable(huffman
