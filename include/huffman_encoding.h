@@ -21,7 +21,7 @@ bool free_string_pair(StringPair *string_pair);
 
 bool free_huffman_tree(HuffmanTree *huffman_tree);
 
-bool build_string_pairs(StringPair string_pair_list[]);
+StringPair *build_string_pairs(const char *str);
 
 bool sort_string_pairs(StringPair string_pair_list[]);
 
