@@ -22,7 +22,7 @@ bool is_leaf(BinaryTreeNode *node);
 
 bool is_head(BinaryTreeNode *node);
 
-void calculate_depth(BinaryTree *tree);
+size_t calculate_depth(BinaryTree *tree);
 
 bool free_binary_tree_node(BinaryTreeNode *node);
 
@@ -30,4 +30,5 @@ bool free_binary_tree(BinaryTree *tree);
 
 BinaryTree *make_binary_tree(BinaryTreeNode *head, size_t height);
 
-BinaryTreeNode *make_node(int8_t edge_value, void *data);
+BinaryTreeNode *make_node(BinaryTreeNode *child1, BinaryTreeNode *child2,
+                          BinaryTreeNode *prev, int8_t edge_value, void *data);
