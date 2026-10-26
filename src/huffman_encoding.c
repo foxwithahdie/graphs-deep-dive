@@ -84,16 +84,64 @@ StringPair *build_string_pairs(const char *str) {
   return string_pairs;
 }
 
-bool sort_string_pairs(StringPair string_pair_list[]) { return false; }
+bool free_string_pair_list(StringPair string_pair_list[]) {
+  free(string_pair_list);
+  return true;
+}
+void selectionSort(int arr[], int n) {}
 
-HuffmanTree *build_huffman_tree(StringPair string_pair_list[],
+bool sort_string_pairs(StringPair string_pair_list[], size_t len) {
+  if (len == 0)
+    return false;
+  for (size_t i = 0; i < len - 1; i++) {
+
+    // Assume the current position holds
+    // the minimum element
+    size_t min_idx = i;
+
+    // Iterate through the unsorted portion
+    // to find the actual minimum
+    for (size_t j = i + 1; j < len; j++) {
+      if (string_pair_list[j].frequency < string_pair_list[min_idx].frequency) {
+        // Update min_idx if a smaller element is found
+        min_idx = j;
+      }
+    }
+
+    // Move minimum element to its
+    // correct position
+    if (min_idx != i) {
+      StringPair temp = string_pair_list[i];
+      string_pair_list[i] = string_pair_list[min_idx];
+      string_pair_list[min_idx] = temp;
+    }
+  }
+
+  return true;
+}
+// builds huffman tree. inputs string_pair_list (pairs of individual characters
+// & frequencies), len being the number of string pairs, tree being input of
+// binary tree
+
+HuffmanTree *build_huffman_tree(StringPair *string_pair_list, size_t len,
                                 BinaryTree *tree) {
-  return NULL;
+  HuffmanTree *huffman_tree = (HuffmanTree *)malloc(sizeof(HuffmanTree));
+
+  huffman_tree->tree = tree;
+  huffman_tree->string_pairs = string_pair_list;
+
+  size_t string_length = 0;
+
+  for (size_t i = 0; i < len; i++) {
+    string_length += string_pair_list[i].frequency;
+  }
+
+  size_t huffman_tree->tree->head = make_node();
+
+  return huffman_tree;
 }
 
-bool free_string_pair(StringPair *string_pair) { return false; }
-
-bool free_huffman_tree(HuffmanTree *shuffman_tree) { return false; }
+bool free_huffman_tree(HuffmanTree *huffman_tree) { return false; }
 
 uint8_t find_encoding_value(HuffmanTree *huffman_tree, const char value) {
   return 0;

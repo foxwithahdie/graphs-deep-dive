@@ -21,7 +21,7 @@ target_include_directories(encoding
 )
 
 target_link_libraries(encoding
-    PRIVATE
+    PUBLIC
         tree
 )
 
