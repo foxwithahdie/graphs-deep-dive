@@ -9,6 +9,10 @@
 // len: number of lowest bits to print, highest of them first
 void print_bits(uint64_t bits, size_t len);
 
+// bytes: bit buffer from find_string_encoding
+// bit_len: number of bits to print, in the order they were written
+void print_bit_buffer(const uint8_t *bytes, size_t bit_len);
+
 // huffman_tree: tree from build_huffman_tree (can be NULL)
 // draws the tree top down, centered in the terminal. letters are rectangles
 // (letter:frequency on top, code below), nodes without a letter are ovals

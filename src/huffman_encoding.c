@@ -58,7 +58,11 @@ StringPair *build_string_pairs(const char *str) {
       (StringPair *)malloc(sizeof(StringPair) * string_pair_amount);
 
   size_t unique_letter_index = 0;
-  for (int i = 0; i < strlen(str); i++) {
+
+  // strlen once; in the loop condition it would rescan str every iteration
+  size_t str_len = strlen(str);
+
+  for (size_t i = 0; i < str_len; i++) {
     int letters_covered = 0;
     for (int j = 0; j < unique_letter_index; j++) {
       // letter was already seen
@@ -301,44 +305,63 @@ uint32_t find_encoding_value(HuffmanTree *huffman_tree, const char value,
   return code;
 }
 
-// returns encoding of whole str; bit_len = number of bits used (0 on failure).
-// fails when a letter is not in tree or the encoding needs more than 64 bits
-uint64_t find_string_encoding(HuffmanTree *huffman_tree, const char *str,
+// returns malloc'd bytes holding the encoding of whole str; bit_len = number of
+// bits used. bit i is in byte i / 8, highest bit of each byte first. returns
+// NULL when a letter is not in tree
+uint8_t *find_string_encoding(HuffmanTree *huffman_tree, const char *str,
                               size_t *bit_len) {
-  uint64_t encoding = 0;
+  size_t str_len = strlen(str);
+  size_t total_bits = 0;
 
   *bit_len = 0;
 
-  size_t str_len = strlen(str);
+  // first pass counts the bits so the buffer is the right size
+  for (size_t i = 0; i < str_len; i++) {
+    uint8_t code_len = 0;
+
+    find_encoding_value(huffman_tree, str[i], &code_len);
+
+    if (code_len == 0)
+      return NULL;
+
+    total_bits += code_len;
+  }
+
+  // calloc so every bit starts as 0; only the 1 bits get set. + 1 so an
+  // empty str still gets a buffer
+  uint8_t *encoding = (uint8_t *)calloc(total_bits / 8 + 1, 1);
+  size_t bit_index = 0;
 
   for (size_t i = 0; i < str_len; i++) {
     uint8_t code_len = 0;
     uint32_t code = find_encoding_value(huffman_tree, str[i], &code_len);
 
-    if (code_len == 0 || *bit_len + code_len > 64) {
-      *bit_len = 0;
-      return 0;
-    }
+    // writing the code highest bit first
+    for (uint8_t j = code_len; j > 0; j--) {
+      if ((code >> (j - 1)) & 1) {
+        encoding[bit_index / 8] |= (uint8_t)(0x80 >> (bit_index % 8));
+      }
 
-    // shifting earlier codes left to make room for this code
-    encoding = (encoding << code_len) | code;
-    *bit_len += code_len;
+      bit_index++;
+    }
   }
+
+  *bit_len = total_bits;
 
   return encoding;
 }
 
 // decodes bit_len bits of encoding into out. out needs space for bit_len + 1
 // chars. no separators needed since huffman codes are prefix free
-bool decode_string(HuffmanTree *huffman_tree, uint64_t encoding, size_t bit_len,
-                   char *out) {
+bool decode_string(HuffmanTree *huffman_tree, const uint8_t *encoding,
+                   size_t bit_len, char *out) {
   BinaryTreeNode *head = huffman_tree->tree->head;
   BinaryTreeNode *node = head;
   size_t out_index = 0;
 
-  // reading highest bit first; 0 = child_1, 1 = child_2
-  for (size_t i = bit_len; i > 0; i--) {
-    uint8_t bit = (encoding >> (i - 1)) & 1;
+  // reading bits in the order they were written; 0 = child_1, 1 = child_2
+  for (size_t i = 0; i < bit_len; i++) {
+    uint8_t bit = (encoding[i / 8] >> (7 - i % 8)) & 1;
 
     node = (bit == RIGHT_NODE) ? node->child_2 : node->child_1;
 

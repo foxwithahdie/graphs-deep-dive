@@ -61,6 +61,15 @@ void print_bits(uint64_t bits, size_t len) {
   return;
 }
 
+void print_bit_buffer(const uint8_t *bytes, size_t bit_len) {
+  // bit i is in byte i / 8, highest bit of each byte first
+  for (size_t i = 0; i < bit_len; i++) {
+    printf("%u", (unsigned)((bytes[i / 8] >> (7 - i % 8)) & 1));
+  }
+
+  return;
+}
+
 // width of the terminal in columns. falls back to $COLUMNS, then 80, when
 // output is not a terminal (e.g. piped into a file)
 static int terminal_width(void) {

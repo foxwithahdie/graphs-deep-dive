@@ -64,18 +64,18 @@ uint32_t find_encoding_value(HuffmanTree *huffman_tree, const char value,
 // huffman_tree: tree from build_huffman_tree
 // str: null terminated string to encode
 // bit_len: out, set to number of bits used (0 on failure)
-// returns codes of str joined together, first letter in the highest bits.
-// fails (returns 0) if a letter is not in the tree or the encoding needs
-// more than 64 bits
-uint64_t find_string_encoding(HuffmanTree *huffman_tree, const char *str,
+// returns malloc'd bytes with the codes of str joined together, no length
+// limit. bit i is in byte i / 8, highest bit of each byte first. caller
+// frees it. returns NULL if a letter is not in the tree
+uint8_t *find_string_encoding(HuffmanTree *huffman_tree, const char *str,
                               size_t *bit_len);
 
 // huffman_tree: tree from build_huffman_tree
-// encoding: bits from find_string_encoding
+// encoding: bytes from find_string_encoding
 // bit_len: number of bits in encoding to read
 // out: buffer for the decoded string, needs space for bit_len + 1 chars.
 // always null terminated
 // returns true if every bit decoded into a letter, false if the bits lead
 // to a missing edge or end partway down the tree
-bool decode_string(HuffmanTree *huffman_tree, uint64_t encoding, size_t bit_len,
-                   char *out);
+bool decode_string(HuffmanTree *huffman_tree, const uint8_t *encoding,
+                   size_t bit_len, char *out);
