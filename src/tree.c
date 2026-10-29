@@ -101,9 +101,8 @@ bool free_binary_tree(BinaryTree *tree) {
 BinaryTree *make_binary_tree(BinaryTreeNode *head, size_t height) {
   BinaryTree *tree = (BinaryTree *)malloc(sizeof(BinaryTree));
 
-  if (head != NULL) {
-    tree->head = head;
-  }
+  tree->head = head;
+
   tree->height = height;
 
   return tree;
@@ -115,17 +114,11 @@ BinaryTreeNode *make_node(BinaryTreeNode *child1, BinaryTreeNode *child2,
   // allocating space for BinaryTreeNode type pointer; casted from void type
   BinaryTreeNode *tree_node = (BinaryTreeNode *)malloc(sizeof(BinaryTreeNode));
 
-  if (child1 != NULL) {
-    tree_node->child_1 = child1;
-  }
+  tree_node->child_1 = child1;
 
-  if (child2 != NULL) {
-    tree_node->child_2 = child2;
-  }
+  tree_node->child_2 = child2;
 
-  if (prev != NULL) {
-    tree_node->prev = prev;
-  }
+  tree_node->prev = prev;
 
   tree_node->edge_value = edge_value;
 

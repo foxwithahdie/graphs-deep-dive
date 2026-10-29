@@ -88,7 +88,6 @@ bool free_string_pair_list(StringPair string_pair_list[]) {
   free(string_pair_list);
   return true;
 }
-void selectionSort(int arr[], int n) {}
 
 bool sort_string_pairs(StringPair string_pair_list[], size_t len) {
   if (len == 0)
@@ -119,6 +118,10 @@ bool sort_string_pairs(StringPair string_pair_list[], size_t len) {
 
   return true;
 }
+
+static uint32_t node_frequency(BinaryTreeNode *node) {
+  return (((StringPair *)(node->data))->frequency);
+}
 // builds huffman tree. inputs string_pair_list (pairs of individual characters
 // & frequencies), len being the number of string pairs, tree being input of
 // binary tree
@@ -131,12 +134,19 @@ HuffmanTree *build_huffman_tree(StringPair *string_pair_list, size_t len,
   huffman_tree->string_pairs = string_pair_list;
 
   size_t string_length = 0;
+  BinaryTreeNode **list_of_leafs =
+      (BinaryTreeNode **)malloc(sizeof(BinaryTreeNode *) * len);
+
+  StringPair string_pairs_copy[len];
 
   for (size_t i = 0; i < len; i++) {
     string_length += string_pair_list[i].frequency;
+    string_pairs_copy[i] = string_pair_list[i];
+    list_of_leafs[i] =
+        make_node(NULL, NULL, NULL, 0, (void *)(&string_pair_list[i]));
   }
 
-  size_t huffman_tree->tree->head = make_node();
+  huffman_tree->tree->head = make_node(NULL, NULL, NULL, 0, (void *)0);
 
   return huffman_tree;
 }
