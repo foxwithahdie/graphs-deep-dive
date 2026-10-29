@@ -73,9 +73,7 @@ bool free_binary_tree_node(BinaryTreeNode *node) {
 }
 
 static void free_node_tree(BinaryTreeNode *node) {
-  if (node->child_1 == NULL && node->child_2 == NULL) {
-    free_binary_tree_node(node);
-  } else if (node->child_1 != NULL && node->child_2 != NULL) {
+  if (node->child_1 != NULL && node->child_2 != NULL) {
     free_node_tree(node->child_1);
     free_node_tree(node->child_2);
   } else if (node->child_1 != NULL) {

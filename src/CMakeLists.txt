@@ -25,12 +25,27 @@ target_link_libraries(encoding
         tree
 )
 
+add_library(print
+    huffman_print.c
+)
+
+target_include_directories(print
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+)
+
+target_link_libraries(print
+    PUBLIC
+        encoding
+)
+
 add_executable(huffman
     main.c
 )
 
 target_link_libraries(huffman
     PRIVATE
+        print
         encoding
         tree
 )
